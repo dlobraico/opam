@@ -19,7 +19,7 @@ let repositories = Filename.concat local_path "git"
    at [dirname] *)
 let get_updates dirname =
   Run.in_dir dirname (fun () ->
-    let err = Run.command [ "git" ; "fetch" ; "origin" ] in
+    let err = Run.command "get_updates" [ "git" ; "fetch" ; "origin" ] in
     if err = 0 then
       Run.read_command_output
         [ "git" ; "diff" ; "remotes/origin/master" ; "--name-only" ]
@@ -30,7 +30,7 @@ let get_updates dirname =
 (* Update the git repository located at [dirname] *)
 let update dirname =
   Run.in_dir dirname (fun () ->
-    let err = Run.command [ "git" ; "pull" ; "origin" ; "master" ] in
+    let err = Run.command "update" [ "git" ; "pull" ; "origin" ; "master" ] in
     if err <> 0 then
       Globals.error_and_exit "Cannot update git repository %s" dirname
   )
@@ -65,5 +65,5 @@ let () =
     (Path.R.updated (Path.R.of_path (Dirname.of_string local_path)))
     (NV.Set.union repo_updates updates)
 
-    
-    
+
+

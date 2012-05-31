@@ -105,7 +105,7 @@ let () =
     | Some url ->
         Filename.remove (tmp nv // archive_name url);
         Dirname.mkdir (tmp nv);
-        let err = Dirname.exec (tmp nv) [
+        let err = Dirname.exec (tmp nv)  "main" [
           wget url;
           mv url;
         ] in
@@ -116,7 +116,7 @@ let () =
     List.iter (fun f ->
       Filename.copy_in f tmp_dir
     ) (files nv);
-    let err = Dirname.exec (Dirname.of_string tmp_dir0) [
+    let err = Dirname.exec (Dirname.of_string tmp_dir0) "main" [
       [ "tar" ; "cz" ; NV.to_string nv ; "-f" ; Filename.to_string (Path.R.archive root nv) ]
     ] in
     if err <> 0 then

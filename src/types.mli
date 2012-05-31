@@ -55,7 +55,7 @@ module Dirname: sig
   val mkdir: t -> unit
 
   (** Execute a list of commands in a given directory *)
-  val exec: t -> ?add_to_path:t list -> string list list -> int
+  val exec: t -> ?add_to_path:t list -> string -> string list list -> int
 
   (** Change the current directory *)
   val chdir: t -> unit
@@ -228,10 +228,10 @@ module Repository: sig
 
   (** Default repository *)
   val default: t
-  
+
   (** Get the repository name *)
   val name: t -> string
-  
+
   (** Get the repository kind *)
   val kind: t -> string
 
@@ -252,7 +252,7 @@ module Variable: Abstract
 type variable = Variable.t
 
 (** Section names *)
-module Section: sig 
+module Section: sig
 
   include Abstract
 
@@ -292,7 +292,7 @@ type full_section = Full_section.t
 module Full_variable: sig
 
   include Abstract
-  
+
   (** Create a variable local for a given library/syntax extension *)
   val create_local: name -> section -> variable -> t
 

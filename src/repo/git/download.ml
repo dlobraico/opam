@@ -24,16 +24,16 @@ let git_archive () =
         Globals.error_and_exit "Cannot find %s" p in
     Run.mkdir "git";
     Run.in_dir (local_path / "git") (fun () ->
-      let err = Run.command [ "git" ; "clone" ; url ; package ] in
+      let err = Run.command "git-archive" [ "git" ; "clone" ; url ; package ] in
       if err <> 0 then
         Globals.error_and_exit "%s is not a valid git url" url
     )
   );
   (* Then run git-archive to get a tar.gz *)
   Run.in_dir dirname (fun () ->
-    let tar = package ^ ".tar" in 
+    let tar = package ^ ".tar" in
     let err =
-      Run.commands [ 
+      Run.commands "git-archive" [
         [ "git" ; "archive" ; "--format=tar" ; "--prefix="^package^"/" ; "HEAD" ; "-o" ; tar ] ;
         [ "gzip" ; "-f" ; tar ] ;
       ] in

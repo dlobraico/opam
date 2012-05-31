@@ -54,7 +54,7 @@ let warning fmt =
   ) fmt
 
 exception Exit of int
-  
+
 let error_and_exit fmt =
   Printf.kprintf (fun str ->
     error "%s" str;
@@ -68,7 +68,7 @@ let msg fmt =
     Printf.printf "%s%!" str
   ) fmt
 
-type os = 
+type os =
   | Darwin
   | Linux
   | FreeBSD
@@ -89,4 +89,5 @@ let os = match Sys.os_type with
   | _        -> assert false
 
 (* XXX: put that in ~/.opam/config *)
-let cores = 4
+let cores = 1 (* for now *)
+

@@ -47,7 +47,7 @@ module Dirname: sig
   val cwd: unit -> t
   val rmdir: t -> unit
   val mkdir: t -> unit
-  val exec: t -> ?add_to_path:t list -> string list list -> int
+  val exec: t -> ?add_to_path:t list -> string -> string list list -> int
   val chdir: t -> unit
   val basename: t -> string
   val exists: t -> bool
@@ -67,10 +67,10 @@ end = struct
   let mkdir dirname =
     Run.mkdir (to_string dirname)
 
-  let exec dirname ?(add_to_path = []) cmds =
-    Run.in_dir (to_string dirname) 
-      (fun () -> 
-        Run.commands
+  let exec dirname ?(add_to_path = []) project cmds =
+    Run.in_dir (to_string dirname)
+      (fun () ->
+        Run.commands project
           ~add_to_path:(List.map of_string add_to_path)
           cmds)
 
@@ -83,7 +83,7 @@ end = struct
   let exists dirname =
     Sys.file_exists (to_string dirname)
 end
-    
+
 type dirname = Dirname.t
 
 (* Basenames *)
@@ -295,7 +295,7 @@ end = struct
         (pkg.Cudf.package, pkg.Cudf.version) in
     { name    = N.of_string (Common.CudfAdd.decode pkg.Cudf.package);
       version = V.of_string real_version; }
-    
+
   let to_string t =
     Printf.sprintf "%s%c%s" (N.to_string t.name) sep (V.to_string t.version)
 

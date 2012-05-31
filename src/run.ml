@@ -29,13 +29,13 @@ let log_file () =
 
 let mkdir dir =
   log "mkdir %s" dir;
-  let rec aux dir = 
+  let rec aux dir =
     if not (Sys.file_exists dir) then begin
       aux (Filename.dirname dir);
       Unix.mkdir dir 0o755;
     end in
   aux dir
-  
+
 let copy src dst =
   log "copying %s to %s" src dst;
   let n = 1024 in
@@ -89,7 +89,7 @@ let in_dir dir fn =
   with e ->
     chdir cwd;
     raise e
-    
+
 let list kind dir =
   in_dir dir (fun () ->
     let d = Sys.readdir (Unix.getcwd ()) in
@@ -108,7 +108,7 @@ let remove_file file =
   log "remove_file %s" file;
   try Unix.unlink file
   with Unix.Unix_error _ -> ()
-    
+
 let rec remove_dir dir =
   if Sys.file_exists dir then begin
     List.iter remove_file (files dir);
@@ -155,7 +155,7 @@ let real_path p =
   else
     dir / base
 
-let add_path bins = 
+let add_path bins =
   let path = ref "<not set>" in
   let env = Unix.environment () in
   for i = 0 to Array.length env - 1 do
@@ -205,8 +205,16 @@ let fold f =
     | err, _  -> err
   ) 0
 
-let commands ?(add_to_path = []) = 
-  fold (command ~add_to_path)
+let commands msg ?(add_to_path = []) cmds =
+  let counter = ref 0 in
+  fold (fun cmd ->
+    incr counter;
+    Globals.msg "%s[%d]: %s\n" msg !counter (String.concat " " cmd);
+    command ~add_to_path cmd) cmds
+
+let command msg ?(add_to_path = []) cmd =
+  Globals.msg "%s: %s\n" msg  (String.concat " " cmd);
+  command ~add_to_path cmd
 
 let read_command_output ?(add_to_path = []) cmd =
   let r = run_process ~add_to_path cmd in
@@ -216,9 +224,9 @@ let is_archive file =
   List.fold_left
     (function
       | Some s -> fun _ -> Some s
-      | None -> fun (ext, c) -> 
+      | None -> fun (ext, c) ->
         if List.exists (Filename.check_suffix file) ext then
-          Some (fun dir -> command  [ "tar" ; "xf"^c ; file; "-C" ; dir ])
+          Some (fun dir -> command "is-archive" [ "tar" ; "xf"^c ; file; "-C" ; dir ])
         else
           None)
     None
@@ -241,7 +249,7 @@ let extract file dst =
       if not (Sys.is_directory (tmp_dir / name)) then
         let root = root name in
         let n = String.length root in
-        let rest = String.sub name n (String.length name - n) in 
+        let rest = String.sub name n (String.length name - n) in
         (tmp_dir / name, dst ^  rest) :: accu
       else
         accu in
@@ -285,7 +293,7 @@ let flock () =
       Globals.log id "locking %s" file;
     end in
   loop ()
-    
+
 let funlock () =
   let id = string_of_int (Unix.getpid ()) in
   let file = lock_file () in

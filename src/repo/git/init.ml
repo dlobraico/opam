@@ -20,7 +20,7 @@ let remote_address = Sys.argv.(1)
 
 let git_clone () =
   let err =
-    Run.commands [
+    Run.commands "git-clone" [
       [ "git" ; "init" ] ;
       [ "git" ; "remote" ; "add" ; "origin" ; remote_address ] ;
       [ "git" ; "pull" ; "origin" ; "master" ]

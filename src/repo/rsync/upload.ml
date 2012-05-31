@@ -14,8 +14,8 @@ let (/) = Filename.concat
 
 let rsync dir =
   let err =
-    Run.command [
-      "rsync" ; "-ar" ; ("upload" / dir / "") ; (remote_address / dir / "") 
+    Run.command "rsync" [
+      "rsync" ; "-ar" ; ("upload" / dir / "") ; (remote_address / dir / "")
     ] in
   if err <> 0 then
     Globals.error_and_exit "rsync (%s) command failed" dir

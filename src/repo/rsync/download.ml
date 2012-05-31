@@ -15,6 +15,6 @@ let (/) = Filename.concat
 let () =
   let remote_archive = remote_address / "archives" / package ^ ".tar.gz" in
   let err =
-    Run.command [ "rsync" ; "-ar"; remote_archive ; "archives/" ] in
+    Run.command "main-rsync" [ "rsync" ; "-ar"; remote_archive ; "archives/" ] in
   if err <> 0 then
     Globals.error_and_exit "rsync command failed"
